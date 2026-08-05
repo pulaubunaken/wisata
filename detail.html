@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Wisata Bunaken</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased text-base" onload="loadDetailUMKM()">
+
+    <!-- Pesan Loading -->
+    <div id="loading" class="min-h-screen flex items-center justify-center">
+        <p class="text-gray-500 font-semibold animate-pulse text-lg">Memuat data UMKM...</p>
+    </div>
+
+    <!-- Konten Utama -->
+    <main id="konten-utama" class="hidden max-w-md mx-auto bg-white min-h-screen shadow-xl relative pb-12">
+        
+        <!-- Navigasi Kembali ke Beranda -->
+        <div class="bg-gray-900 text-white px-4 py-3 flex items-center shadow-md sticky top-0 z-20">
+            <a href="index.html" class="text-sm font-semibold hover:underline flex items-center gap-1 text-blue-200">
+                ← Kembali ke Beranda Info Bunaken
+            </a>
+        </div>
+
+        <!-- Foto Utama -->
+        <div class="h-64 w-full bg-gray-200 relative">
+            <img id="d-foto" src="https://via.placeholder.com/600x400?text=Foto+Belum+Tersedia" class="w-full h-full object-cover" alt="Foto UMKM">
+            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
+                <span id="d-kategori" class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow">Kategori</span>
+                <h1 id="d-nama" class="text-2xl font-bold text-white mt-1">Memuat Nama...</h1>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="flex gap-3 p-4 -mt-6 relative z-10">
+            <a id="btn-wa" href="#" target="_blank" class="hidden flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-3 rounded-xl font-bold text-base shadow-lg transition-transform transform active:scale-95">
+                💬 Pesan WhatsApp
+            </a>
+            <a id="btn-maps" href="#" target="_blank" class="hidden flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-3 rounded-xl font-bold text-base shadow-lg transition-transform transform active:scale-95">
+                🗺️ Buka Peta
+            </a>
+        </div>
+
+        <!-- Info & Deskripsi -->
+        <div class="p-5 space-y-5">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-2">Tentang Kami</h2>
+                <p id="d-deskripsi" class="text-base text-gray-600 leading-relaxed"></p>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-base space-y-1">
+                <p class="font-semibold text-blue-900">🕒 Jam Buka: <span id="d-jam" class="font-normal text-gray-700">-</span></p>
+                <p class="font-semibold text-blue-900 mt-1">📢 Promo: <span id="d-promo" class="font-normal text-gray-700">-</span></p>
+            </div>
+
+            <!-- Daftar Harga & Layanan -->
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-3">Daftar Produk & Layanan</h2>
+                <div id="d-produk" class="space-y-2 bg-gray-50 p-4 rounded-xl border border-gray-100 text-base">
+                    <!-- Daftar akan dimunculkan oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- Galeri Foto -->
+            <div class="mt-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-3">Galeri Foto</h2>
+                <div id="d-galeri" class="grid grid-cols-3 gap-2">
+                    <!-- Foto galeri akan dimunculkan oleh JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-10 pt-4 border-t border-gray-100">
+            <p class="text-xs text-gray-400">Digitalisasi UMKM Pulau Bunaken</p>
+        </div>
+    </main>
+
+    <!-- KOTAK ZOOM / LIGHTBOX -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4 transition-all" onclick="tutupLightbox()">
+        <button class="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300">&times;</button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] rounded shadow-2xl object-contain">
+        <p class="text-white text-sm mt-4 opacity-70">Ketuk di mana saja untuk menutup</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
