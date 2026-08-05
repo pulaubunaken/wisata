@@ -807,7 +807,6 @@ function initQRUtamaAdmin() {
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const linkUtama = baseUrl + 'index.html';
     
-    // Menggunakan API ukuran besar (600x600) untuk tampilan preview yang jernih
     const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(linkUtama)}`;
     
     imgElement.src = apiUrl;
@@ -818,7 +817,6 @@ async function unduhQRUtamaHD() {
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const linkUtama = baseUrl + 'index.html';
     
-    // Mengambil QR Code dengan resolusi masif (1200x1200) untuk hasil cetak HD tanpa pecah
     const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&data=${encodeURIComponent(linkUtama)}`;
     
     const canvas = document.createElement('canvas');
@@ -830,7 +828,7 @@ async function unduhQRUtamaHD() {
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    ctx.strokeStyle = '#2563EB'; // Border biru konsisten
+    ctx.strokeStyle = '#2563EB';
     ctx.lineWidth = 6;
     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
     
@@ -910,21 +908,30 @@ async function loadDetailUMKM() {
 
     if (data.nomor_wa) {
         let rawWa = data.nomor_wa;
-        if (rawWa.startsWith('0')) {
-            rawWa = '62' + rawWa.substring(1);
+        
+        // Format WhatsApp (Wajib berawalan 62)
+        let nomorWaWap = rawWa;
+        if (nomorWaWap.startsWith('0')) {
+            nomorWaWap = '62' + nomorWaWap.substring(1);
+        }
+        
+        // Format Telepon Seluler Lokal (Wajib berawalan 0 agar tidak 'tidak terdaftar' di jaringan lokal)
+        let nomorTelpLokal = rawWa;
+        if (nomorTelpLokal.startsWith('62')) {
+            nomorTelpLokal = '0' + nomorTelpLokal.substring(2);
         }
         
         const btnWa = document.getElementById('btn-wa');
         if (btnWa) {
             const teksPesan = `Halo ${data.nama_usaha}, saya melihat usaha Anda dari Info Wisata Bunaken.`;
-            btnWa.href = `https://wa.me/${rawWa}?text=${encodeURIComponent(teksPesan)}`;
+            btnWa.href = `https://wa.me/${nomorWaWap}?text=${encodeURIComponent(teksPesan)}`;
             btnWa.classList.remove('hidden');
             btnWa.classList.add('flex');
         }
 
         const btnTelp = document.getElementById('btn-telp');
         if (btnTelp) {
-            btnTelp.href = `tel:${rawWa}`;
+            btnTelp.href = `tel:${nomorTelpLokal}`;
             btnTelp.classList.remove('hidden');
             btnTelp.classList.add('flex');
         }
