@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Wisata Bunaken</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .cursor-grab { cursor: grab; }
+        .cursor-grabbing { cursor: grabbing !important; }
+        
+        iframe.goog-te-banner-frame { display: none !important; }
+        body { top: 0px !important; position: static !important; }
+        html { top: 0px !important; position: static !important; }
+        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased text-base" onload="loadDetailUMKM()">
+
+    <div id="loading" class="min-h-screen flex items-center justify-center">
+        <p class="text-gray-500 font-semibold animate-pulse text-lg">Memuat data UMKM...</p>
+    </div>
+
+    <main id="konten-utama" class="hidden max-w-md mx-auto bg-white min-h-screen shadow-xl relative pb-12 overflow-hidden">
+        
+        <div class="bg-gray-900 text-white px-4 py-3 flex justify-between items-center shadow-md sticky top-0 z-20">
+            <a href="index.html" class="text-sm font-semibold hover:underline flex items-center gap-1 text-blue-200 truncate pr-2">
+                ← Kembali
+            </a>
+            
+            <div id="google_translate_element" style="display: none;"></div>
+            
+            <select id="pilihan-bahasa" onchange="gantiBahasa(this.value)" class="bg-gray-800 text-white border border-gray-700 text-xs font-bold px-2 py-1.5 rounded shadow outline-none cursor-pointer">
+                <option value="id">ID - Indonesia</option>
+                <option value="en">EN - English</option>
+                <option value="zh-CN">ZH - 中文</option>
+            </select>
+        </div>
+
+        <div class="h-64 w-full bg-gray-200 relative">
+            <img id="d-foto" src="https://via.placeholder.com/600x400?text=Foto+Belum+Tersedia" class="w-full h-full object-cover" alt="Foto UMKM">
+            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
+                <span id="d-kategori" class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow">Kategori</span>
+                <h1 id="d-nama" class="text-2xl font-bold text-white mt-1">Memuat Nama...</h1>
+            </div>
+        </div>
+
+        <!-- TOMBOL AKSI DIPERBARUI: 3 TOMBOL (WA, TELEPON, MAPS) -->
+        <div class="flex gap-2 p-4 -mt-6 relative z-10">
+            <a id="btn-wa" href="#" target="_blank" class="hidden flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-transform transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                <span>WhatsApp</span>
+            </a>
+            <a id="btn-telp" href="#" class="hidden flex-1 bg-gray-800 hover:bg-gray-900 text-white text-center py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-transform transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                <span>Telepon</span>
+            </a>
+            <a id="btn-maps" href="#" target="_blank" class="hidden flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-transform transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.402 10.398 8 16.398 4.598-6 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
+                <span>Peta</span>
+            </a>
+        </div>
+
+        <div class="p-5 space-y-5">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-2">Tentang Kami</h2>
+                <p id="d-deskripsi" class="text-base text-gray-600 leading-relaxed"></p>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-base space-y-1">
+                <p class="font-semibold text-blue-900">🕒 Jam Buka: <span id="d-jam" class="font-normal text-gray-700">-</span></p>
+                <p class="font-semibold text-blue-900 mt-1">📢 Promo: <span id="d-promo" class="font-normal text-gray-700">-</span></p>
+                <div id="wrapper-medsos" class="hidden mt-2 pt-2 border-t border-blue-200">
+                    <a id="d-medsos" href="#" target="_blank" class="text-blue-600 hover:underline font-semibold text-sm flex items-center gap-1 truncate">
+                        🔗 Kunjungi Website / Sosial Media Resmi
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-3">Galeri Foto</h2>
+                <div class="relative group">
+                    <button id="btn-scroll-left" onclick="geserGaleri(-1)" class="hidden absolute -left-3 top-1/2 -translate-y-1/2 bg-gray-900/80 hover:bg-gray-900 text-white w-8 h-8 flex items-center justify-center rounded-full z-10 shadow-lg backdrop-blur-sm transition-all border border-white/20">
+                        &#10094;
+                    </button>
+                    <div id="d-galeri" class="flex overflow-x-auto gap-2 pb-2 snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing select-none scroll-smooth">
+                    </div>
+                    <button id="btn-scroll-right" onclick="geserGaleri(1)" class="hidden absolute -right-3 top-1/2 -translate-y-1/2 bg-gray-900/80 hover:bg-gray-900 text-white w-8 h-8 flex items-center justify-center rounded-full z-10 shadow-lg backdrop-blur-sm transition-all border border-white/20">
+                        &#10095;
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-1 mb-3">Daftar Produk / Layanan</h2>
+                <div id="d-produk" class="space-y-2 bg-gray-50 p-4 rounded-xl border border-gray-100 text-base">
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="text-center mt-10 pt-4 border-t border-gray-100">
+            <p class="text-xs text-gray-400">© 2026 Digitalisasi Promosi Wisata Pulau Bunaken</p>
+        </div>
+    </main>
+
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-50 hidden flex-col items-center justify-center p-4 transition-all" onclick="tutupLightbox()">
+        <button class="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300">&times;</button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] rounded shadow-2xl object-contain">
+        <p class="text-white text-sm mt-4 opacity-70">Ketuk di mana saja untuk menutup</p>
+    </div>
+
+    <!-- Panggil v=15 agar script terbaca baru -->
+    <script src="app.js?v=15"></script>
+
+    <script>
+        function geserGaleri(arah) {
+            const galeri = document.getElementById('d-galeri');
+            const scrollAmount = galeri.clientWidth / 3; 
+            galeri.scrollBy({ left: arah * scrollAmount, behavior: 'smooth' });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const slider = document.getElementById('d-galeri');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('cursor-grabbing');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.classList.remove('cursor-grabbing');
+            });
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.classList.remove('cursor-grabbing');
+            });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; 
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'id', autoDisplay: false}, 'google_translate_element');
+        }
+        function gantiBahasa(langCode) {
+            if (langCode === 'id') {
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+            } else {
+                document.cookie = "googtrans=/id/" + langCode + "; path=/";
+                document.cookie = "googtrans=/id/" + langCode + "; domain=" + window.location.hostname + "; path=/";
+            }
+            window.location.reload(); 
+        }
+        window.addEventListener('load', () => {
+            let match = document.cookie.match(/googtrans=\/id\/([a-zA-Z-]+)/);
+            let lang = match ? match[1] : 'id';
+            let customSelect = document.getElementById("pilihan-bahasa");
+            if (customSelect) customSelect.value = lang;
+        });
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
