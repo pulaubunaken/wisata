@@ -924,7 +924,7 @@ async function loadDetailUMKM() {
 
         const btnTelp = document.getElementById('btn-telp');
         if (btnTelp) {
-            btnTelp.href = `tel:+${rawWa}`;
+            btnTelp.href = `tel:${rawWa}`;
             btnTelp.classList.remove('hidden');
             btnTelp.classList.add('flex');
         }
